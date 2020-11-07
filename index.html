@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+</head>
+<body>
+<p><strong>CS 194-26 PROJECT 4&nbsp;</strong><br /><strong>Kenan Jiang</strong></p>
+<li><strong>Overview</strong><br />In this project, I used CNN to detect Facial Keypoint on images.</li>
+<li><strong>Part 1: Nose Tip Detection</strong><br />
+In this part, I built a simple CNN to detect the nose point. I first convert the images to size 80x60 and present it with the ground-truth keypoints.
+<div class="row">
+    <div class="column">
+        <figure>
+            <img src="./1.png" alt="dx" style="width:100%">
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./2.png" alt="dy" style="width:100%">
+        </figure>   
+    </div>       
+    <div class="column">
+        <figure>
+            <img src="./3.png" alt="dy" style="width:100%">
+        </figure>   
+    </div>     
+  </div>
+Then I defined a simple CNN with 3 conv layers and two linear layers. I split the data to be 200 training images, and 40 val images. I trained 20 epochs and here are the training loss and val loss over epoch. 
+<div class="row">
+    <div class="column">
+        <figure>
+            <img src="./model1.png" alt="dx" style="width:100%">
+            <figcaption>model structure</figcaption>
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./train_loss.png" alt="dy" style="width:100%">
+            <figcaption>train loss</figcaption>
+        </figure>   
+    </div>       
+    <div class="column">
+        <figure>
+            <img src="./val_loss.png" alt="dy" style="width:100%">
+            <figcaption>val loss</figcaption>
+        </figure>   
+    </div>     
+  </div>
+The results are not too good since it is a small net on a small dataset.
+<div class="row">
+    <div class="column">
+        <figure>
+            <img src="./right1.png" alt="dx" style="width:100%">
+            <figcaption>correct</figcaption>
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./right2.png" alt="dy" style="width:100%">
+            <figcaption>correct</figcaption>
+        </figure>   
+    </div>       
+    <div class="column">
+        <figure>
+            <img src="./wrong1.png" alt="dy" style="width:100%">
+            <figcaption>wrong</figcaption>
+        </figure>   
+    </div> 
+    <div class="column">
+        <figure>
+            <img src="./wrong2.png" alt="dy" style="width:100%">
+            <figcaption>wrong</figcaption>
+        </figure>   
+    </div>        
+  </div>
+It predicts wrong on those who are facing the side. I think it is becuase this short CNN structure cannot capture the pattern of side face labeling in 20 epoches of training. Maybe training more epochs with deeper CNN can solve this problem.
+<li><strong>Part 2: Full Facial Keypoints Detection</strong><br />
+In this part, I added more conv layers to my CNN, and use it to predicts all facial points. Here are the ground-truth keypoints images. I also did data agumentation by flipping the image horizontally. 
+<div class="row">
+    <div class="column">
+        <figure>
+            <img src="./part2_1.png" alt="dx" style="width:100%">
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./part2_2.png" alt="dy" style="width:100%">
+        </figure>   
+    </div>       
+    <div class="column">
+        <figure>
+            <img src="./part2_3.png" alt="dy" style="width:100%">
+            <figcaption>flipped</figcaption>
+        </figure>   
+    </div>     
+  </div>
+Then I added two more conv layers to my CNN. I noticed that adding batchnorm layers would increase the behavior, so I added two BN layers. Here is the detailed structure, train loss and val loss. <br />
+I trained with MSELoss, Adam optim, lr=0.001, 30 epochs. 
+<div class="row">
+    <div class="column">
+        <figure>
+            <img src="./part2_model.png" alt="dx" style="width:100%">
+            <figcaption>model structure</figcaption>
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./part2_train.png" alt="dy" style="width:100%">
+            <figcaption>train loss</figcaption>
+        </figure>   
+    </div>       
+    <div class="column">
+        <figure>
+            <img src="./part2_val.png" alt="dy" style="width:100%">
+            <figcaption>val loss</figcaption>
+        </figure>   
+    </div>     
+  </div>
+Here are 2 decent predicts and 2 wrong predicts. <br />
+I think the model failed because 30 epochs are not enough epochs for my shallow CNN to fully learned the data. When I tried to use resnet18 to train on this dataset, it performs better in 30 epochs. I believe my current CNN is rather simple for my agumented dataset.<br />
+Green being true points. Red being predicted.
+<div class="row">
+    <div class="column">
+        <figure>
+            <img src="./part2_decent.png" alt="dx" style="width:100%">
+            <figcaption>decent</figcaption>
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./part2_decent2.png" alt="dy" style="width:100%">
+            <figcaption>decent</figcaption>
+        </figure>   
+    </div>       
+    <div class="column">
+        <figure>
+            <img src="./part2_wrong.png" alt="dy" style="width:100%">
+            <figcaption>wrong</figcaption>
+        </figure>   
+    </div> 
+    <div class="column">
+        <figure>
+            <img src="./part2_wrong2.png" alt="dy" style="width:100%">
+            <figcaption>wrong</figcaption>
+        </figure>   
+    </div>        
+  </div>
+I visulaised 6 filters learned in each of 4 conv layers. (conv layer5 has large filters that cannot be plotted)
+<div class="row">
+    <div class="column">
+        <figure>
+            <img src="./conv1.png" alt="dx" style="width:100%">
+            <figcaption>conv1</figcaption>
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./conv2.png" alt="dy" style="width:100%">
+            <figcaption>conv2</figcaption>
+        </figure>   
+    </div>       
+    <div class="column">
+        <figure>
+            <img src="./conv3.png" alt="dy" style="width:100%">
+            <figcaption>conv3</figcaption>
+        </figure>   
+    </div> 
+    <div class="column">
+        <figure>
+            <img src="./conv4.png" alt="dy" style="width:100%">
+            <figcaption>conv4</figcaption>
+        </figure>   
+    </div>        
+  </div>
+<li><strong>Part 3: Train With Larger Dataset</strong><br />
+In this part, I am doing a full facial points detection on a large dataset. My Kaggle mean absolute error is 18.10342. 
+I modified pretrained resnet18. I changed the in_channel of the first conv layer to be 1, and the out_features of the last linear channel to be 136. Then I used MSELoss, Adam optimizer, and lr 0.01 to train the model for 30 epochs. <br />
+<div class="row">
+    <div class="column">
+        <figure>
+            <img src="./model_first.png" alt="dx" style="width:100%">
+            <figcaption>model structure first half</figcaption>
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./model_second.png" alt="dx" style="width:100%">
+            <figcaption>model structure second half</figcaption>
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./part3_train.png" alt="dy" style="width:100%">
+            <figcaption>train loss</figcaption>
+        </figure>   
+    </div>       
+    <div class="column">
+        <figure>
+            <img src="./part3_val.png" alt="dy" style="width:100%">
+            <figcaption>val loss</figcaption>
+        </figure>   
+    </div>     
+  </div>
+Here are some results on test set: <br />
+<div class="row">
+    <div class="column">
+        <figure>
+            <img src="./result1.png" alt="blur_dx" style="width:100%">
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./result2.png" alt="blur_dx" style="width:100%">
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./result3.png" alt="blur_dx" style="width:100%">
+        </figure>          
+    </div>
+<li>I run 40 more epochs on the model and test it on my own images, the results are not too bad<br />
+<div class="row">
+    <div class="column">
+        <figure>
+            <img src="./part3_good.png" alt="blur_dx" style="width:100%">
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./part3_bad.png" alt="blur_dx" style="width:100%">
+        </figure>          
+    </div>
+    <div class="column">
+        <figure>
+            <img src="./part3_bad2.png" alt="blur_dx" style="width:100%">
+        </figure>          
+    </div>
+The first image is pretty good. I think it fails the second image because my bbox could be not so good. For the third one, it can detect it is a side face. I think it is because of the glasses, so the eyes part are labelled wrong.
